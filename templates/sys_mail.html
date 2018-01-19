@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="x_content">
+  <form  data-parsley-validate class="form-horizontal form-label-left">
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12" >STMP服务器
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="text" id="smtpserver" required="required" class="form-control col-md-7 col-xs-12" value="{{smtpserver}}"></div>
+    </div>
+    <div class="form-group">
+      <label  class="control-label col-md-3 col-sm-3 col-xs-12">邮箱账号
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input id="smtpaccount" class="form-control col-md-7 col-xs-12" type="text" value="{{smtpaccount}}"></div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">密码
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input id="smtppwd" class="date-picker form-control col-md-7 col-xs-12" required="required" type="password" value="{{smtppwd}}"></div>
+    </div>
+    <div class="ln_solid"></div>
+    <div class="form-group">
+      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-4">
+        <button class="btn btn-primary" type="button">取消</button>
+        <button class="btn btn-primary" type="reset">重置</button>
+        <button type="button" class="btn btn-success" id="smtpbtn">保存</button></div>
+    </div>
+  </form>
+</div>
+
+
+<script>
+
+$("#smtpbtn").click(function() {
+
+    var stmpinfoobj = {};
+    stmpinfoobj.smtpserver = $("#smtpserver").val();
+    stmpinfoobj.smtpaccount = $("#smtpaccount").val();
+    stmpinfoobj.smtppwd = $("#smtppwd").val();
+    if (  ! $("#smtpserver").val() || ! $("#smtpaccount").val()   || ! $("#smtppwd").val() ){
+	swal("信息不能为空,请输入!");
+    }else{
+    $.post("/system/mail/", JSON.stringify(stmpinfoobj),
+    function(ret) {
+        swal(ret);
+
+    })
+    }
+
+})
+
+
+
+</script>
+{%end%}

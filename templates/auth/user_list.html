@@ -1,0 +1,79 @@
+
+<link href="/static/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="/static/js/jquery.dataTables.min.js"></script>
+
+<div class="col-md-6 col-sm-6 col-xs-12">
+  <label >请选择认证类型:</label>
+  <select id="auth_type" class="form-control" required>
+    <option value="ldap">ldap</option>
+    <option value="apm">apm_sys</option></select>
+</div>
+<br />
+<div class="col-md-12 col-sm-12 col-xs-12">
+  <table id="ulist" class="display" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>邮箱地址</th>
+        <th>操作</th></tr>
+    </thead>
+  </table>
+</div>
+
+
+
+
+<script>
+load_table();
+function load_table(){
+    var u_type = $("#auth_type option:selected").val();
+    var ajax_url = '/ajax/user/list?type=' + u_type;
+
+    if ($('#ulist').hasClass('dataTable')) {
+        dttable = $('#ulist').dataTable();
+        dttable.fnClearTable();
+        dttable.fnDestroy();
+    }
+
+    var table = $('#ulist').dataTable({
+        "ajax": ajax_url,
+
+        "language": {
+            "sLengthMenu": "每页显示 _MENU_ 条记录",
+            "sZeroRecords": "对不起，查询不到任何相关数据",
+            "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_条记录",
+            "sInfoEmtpy": "找不到相关数据",
+            "sInfoFiltered": "数据表中共为 _MAX_ 条记录)",
+            "sProcessing": "正在加载中...",
+            "sSearch": "搜索",
+            "oPaginate": {
+                "sFirst": "第一页",
+                "sPrevious": " 上一页 ",
+                "sNext": " 下一页 ",
+                "sLast": " 最后一页 "
+            },
+
+        },
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button>操作</button>"
+        } ]
+
+    });
+
+    $('#ulist tbody').on( 'click', 'button', function () {
+	//var data =  table.rows($(this).parents('tr')) ;
+	var data =  $(this).parents('tr').find("td:eq(0)").html() ;
+	//alert(data);
+    } );
+
+}
+
+
+$("#auth_type").change(function() {
+    load_table();
+});
+
+
+</script>

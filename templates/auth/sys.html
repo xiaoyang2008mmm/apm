@@ -1,0 +1,275 @@
+<!--增加组代码 -->
+
+<div class="modal fade" id="sysnewmt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">创建新角色</h4></div>
+      <div class="modal-body">
+        <div class="col-sm-12">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary">项目名称</button></span>
+            <input type="text" class="form-control" id="role_name"></div>
+        </div>
+        <div class="col-sm-12">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary">添加人员</button></span>
+            <select class="form-control" id="choose_person" multiple="multiple">
+              </select>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">用户名来源
+                <span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li>
+                  <a href="javascript:void(0);" onclick ="load_user('apm')">系统用户</a></li>
+                <li>
+                  <a href="javascript:void(0);" onclick ="load_user('ldap')">ldap用户</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary">项目人员</button></span>
+            <select  class="form-control" multiple="multiple" id="group_p"> </select></div>
+        </div>
+        <div class="col-sm-12">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary">项目权限</button></span>
+              <div class="checkbox" id="checkbox_group">
+		{%for s in maplist%}
+		    {%for m in s%}
+                         <label><input type="checkbox" value="{{m[1]}}">{{m[0]}}</label>
+		    {%end%}
+		{%end%}
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="sys_rolesave">保存</button></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="x_content">
+  <table class="table table-striped projects">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>成员</th>
+        <th>权限</th>
+        <th>操作
+           <span class="glyphicon glyphicon-plus pull-right" aria-hidden="true" id="sysadd"></span>
+	</th></tr>
+    </thead>
+    <tbody id="sysgroup_privileges">
+     {% for k in syslist_table %}
+      <tr>
+        <td>
+          <span value="{{k['_id']}}">{{k['name']}}</span></td>
+        <td>
+          <ul class="list-inline">
+	   {%for p in k['userlist']%}
+              {{p}}
+	   {%end%}
+          </ul>
+        </td>
+        <td>
+	 {% for u in k['urllist'] %}
+	    {% for url in maplist%}
+		{%for map in url%}
+		    {% if u == map[1]%}
+		        {{ map[0] }}
+		    {%end%}
+	        {%end%}
+	    {%end%}
+	 {% end %}
+        </td>
+        <td>
+          <a href="#" class="btn btn-info btn-xs">
+            <i class="fa fa-pencil"></i>编辑</a>
+          <a href="#" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o"></i>删除</a>
+        </td>
+      </tr>
+     {%end%}
+    </tbody>
+  </table>
+</div>
+
+<script>
+
+$("#sysgroup_privileges tr td a").click(function(){
+    var sysname = $(this).parent().parent().find("td:first").text();
+    var sysname_id = $(this).parent().parent().find("td:first").children('span').attr('value');
+
+    var sname = sysname.replace("\n","") ;
+    var e = $(this).text() ;
+
+    if (e.indexOf('删除') > 0) {
+        var msg = "确定要删除吗?";
+        if (confirm(msg) == true) {
+    
+            $.post("/delete_roles_group/", {
+                sname: sname
+            },
+            function(ret) {
+                alert(ret);
+    
+            })
+        } else {
+            return false;
+        }
+    
+    };
+
+
+
+    if (e.indexOf('编辑') > 0  ) {
+        var personlist = $(this).parent().parent().find("td:eq(1)").text().split("\n");
+        var priurllist = $(this).parent().parent().find("td:eq(2)").text().split("\n");
+
+	personlist = personlist.filter(function(n){return n});
+	priurllist = priurllist.filter(function(n){return n});
+	$("#group_p").empty();
+        $.each(personlist,
+            function(index, value) {
+		$("#group_p").prepend("<option value=" + value + ">" + value + "</option>");
+
+        });
+
+
+	var boxs = $("#checkbox_group").html() ;
+
+
+
+
+	$.each(priurllist,
+	    function(index, value) {
+    		$('#checkbox_group').children('label').each(function(){
+                    var v = $(this).text();
+
+		    if (value === v  ){
+			$(this).find("input").attr("checked",true); 
+		    	//console.log(value,"-----", v) ;
+		    }
+    		});
+		
+	})
+
+	$("#role_name").val(sname);
+        $('#sysnewmt').modal('toggle') ;
+
+    };
+
+
+})
+
+
+
+$("#sysadd").click(function (){
+    $('#checkbox_group').find('input').each(function(){
+	 $(this).attr("checked",false); 
+    });
+
+    $("#group_p").empty();
+    $("#role_name").val("");
+    $('#sysnewmt').modal('toggle') ;
+
+})
+
+function load_user(u_type){
+
+    var ajax_url = '/ajax/user/list?type=' + u_type;
+
+    $.ajax({
+        url: ajax_url,
+        dataType: 'json',
+        method: 'GET',
+        success: function(result) {
+            $("#choose_person").empty();
+            var pp = result['data'];
+            $.each(pp,
+            function(index, value) {
+                $("#choose_person").prepend("<option value=" + value[0] + ">" + value[0] + "</option>");
+
+            });
+        }
+    })
+
+}
+
+//添加人员
+$("#choose_person").dblclick(function(){
+        var anyap = $("#choose_person  option:selected").val();
+        if (anyap){
+             $("#group_p").prepend("<option value=" + anyap + ">" + anyap + "</option>");
+        }
+})
+
+//删除元素
+$("#group_p").dblclick(function() {
+    $("#group_p option:selected").remove();
+})
+
+
+$("#sys_rolesave").click(function() {
+    var  role_name = $("#role_name").val();  //获取角色组名称
+
+    var user_list= new Array();  
+    $("#group_p option").each(function(){  
+         var txt = $(this).val();   
+         if(txt){  
+              user_list.push(txt);  
+         }  
+    }) 
+
+
+    var url_list = new Array();
+
+    $('#checkbox_group').find(':checkbox').each(function(){
+  	if ($(this).is(":checked")) {
+	     url_list.push($(this).val());
+  	}
+    });
+
+
+    var role_data = {};
+    role_data.name = role_name ;
+    role_data.userlist = user_list;
+    role_data.urllist = url_list ;
+
+    if (url_list.length  === 0) { swal("项目权限不能为空!!!"); return }
+    if (user_list.length  === 0) { swal("项目人员不能为空!!!"); return }
+
+    if (!role_name) {
+	swal("请填写项目名称!!");
+    }else{
+        $.post('/create_roles/', JSON.stringify(role_data), 
+            function(result){
+                swal(result['status']);
+        })
+    }
+
+
+    
+
+
+})
+
+</script>

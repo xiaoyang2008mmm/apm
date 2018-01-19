@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div id="allpv_container" style="height: 100%" ></div>
+<div id="china_bigcontainer" style="height: 100%" ></div>
+
+<script type="text/javascript" src="/static/js/highcharts.js"></script>
+<script type="text/javascript" src="/static/js/highcharts-zh_CN.js"></script>
+<script src="/static/js/dark-unica.js"></script>
+<script type="text/javascript" src="/static/js/echarts-all-3.js"></script>
+<script type="text/javascript" src="/static/js/china.js"></script>
+<script type="text/javascript" src="/static/js/chinamap.js"></script>
+
+<script>
+
+//柱状图
+if (window.localStorage.getItem("area_pv")){
+    var  datas= (window.localStorage.getItem("area_pv")).split(",") ;
+
+    var s_a =[];
+    var s_b =[];
+    $.each(datas,function(index,value){
+	s_a.push(value);
+	if (s_a.length == 2) {
+	    s_b.push([ s_a[0], parseInt(s_a[1])]);
+    	    s_a =[];
+	 }
+
+    });
+	
+    all_pv(s_b);
+
+}
+
+//全国小鸡图
+if (window.localStorage.getItem("area_average")){
+    var  datas= (window.localStorage.getItem("area_average")).split(",") ;
+
+    var d_a =[];
+    var d_b ={};
+    var d_total =[];
+    $.each(datas,function(index,value){
+        d_a.push(value);
+        if (d_a.length == 2) {
+	    d_b.name = d_a[0]   ;
+	    d_b.value = d_a[1]  ;
+	    d_total.push(d_b) ;
+            d_a =[];
+    	    d_b ={};
+         }
+
+    });
+        
+   china_bigmap(d_total);
+
+}
+
+</script>
+
+
+{%end%}
+

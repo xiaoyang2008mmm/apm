@@ -1,0 +1,166 @@
+<div id="p1-myModal" class="modal fade " tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="myModalLabel">新增项目权限组</h4></div>
+      <div class="modal-body">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary">项目权限组名称:</button></span>
+            <input type="text" class="form-control" id="pp_name"></div>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <button type="button" class="btn btn-primary btn-lg btn-block">项目组app成员</button></div>
+        <div class="form-group">
+          <div class="col-md-5 col-sm-5 col-xs-12">
+		新项目组成员
+            <select class="select2_multiple form-control" multiple="multiple" id="new_ap">
+            </select>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-12">
+            <button type="button" class="btn btn-primary btn-lg">
+              <span class="glyphicon glyphicon-forward"></span>
+            </button>
+            <button type="button" class="btn btn-primary btn-lg">
+              <span class="glyphicon glyphicon-backward"></span>
+            </button>
+          </div>
+          <div class="col-md-5 col-sm-5 col-xs-12">
+		全部工程app
+            <select class="select2_multiple form-control" multiple="multiple" id="all_ap">
+	     {% for a in applist() %}
+              <option>{{a['app_name']}}</option>
+	     {%end%}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <button type="button" class="btn btn-info btn-lg btn-block">项目组人员 
+	  </button></div>
+        <div class="form-group">
+          <div class="col-md-5 col-sm-5 col-xs-12">
+		新项目组成员
+            <select class="select2_multiple form-control" multiple="multiple" id="new_pp">
+              </select>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-12">
+            <button type="button" class="btn btn-info btn-lg">
+              <span class="glyphicon glyphicon-forward"></span>
+            </button>
+            <button type="button" class="btn btn-info btn-lg">
+              <span class="glyphicon glyphicon-backward"></span>
+            </button>
+          </div>
+          <div class="col-md-5 col-sm-5 col-xs-12">
+		全部人员: &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; 
+				人员加载类型:<select id="person_load"> <option>ldap</option> <option>apm</option> </select>
+            <select class="select2_multiple form-control" multiple="multiple" id="p_lists">
+              </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-warning" id="save_pp">保存提交</button></div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+$("#person_load").change(function() {
+    var u_type = $("#person_load option:selected").val();
+    var ajax_url = '/ajax/user/list?type=' + u_type;
+
+    $.ajax({
+        url: ajax_url,
+        dataType: 'json',
+        method: 'GET',
+        success: function(result) {
+            $("#p_lists").empty();
+            var pp = result['data'];
+            $.each(pp,
+            function(index, value) {
+                $("#p_lists").prepend("<option value=" + value[0] + ">" + value[0] + "</option>");
+
+            });
+        }
+    })
+
+})
+
+//添加操作
+$("#all_ap").dblclick(function(){
+	var anyap = $("#all_ap option:selected").val();
+	if (anyap){
+	     $("#new_ap").prepend("<option value=" + anyap + ">" + anyap + "</option>");
+
+	}
+})
+
+
+$("#p_lists").dblclick(function(){
+	var anyap = $("#p_lists  option:selected").val();
+	if (anyap){
+	     $("#new_pp").prepend("<option value=" + anyap + ">" + anyap + "</option>");
+	}
+})
+
+//删除元素
+$("#new_ap").dblclick(function() {
+    $("#new_ap option:selected").remove();
+})
+
+$("#new_pp").dblclick(function() {
+    $("#new_pp option:selected").remove();
+})
+
+$("#save_pp").click(function() {
+    var p0 = $("#pp_name").val() ;
+    var p1 = $("#new_pp option").size();
+    var p2 = $("#new_ap option").size();
+
+    if ((p1 && p2 && p0.length) === 0) {
+        swal("成员列表不能为空!!");
+	return
+    }
+    
+    var p1_list= new Array();  
+    $("#new_pp option").each(function(){  
+         var txt = $(this).val();   
+         if(txt){  
+              p1_list.push(txt);  
+         }  
+    }) 
+
+    var p2_list= new Array();  
+    $("#new_ap option").each(function(){  
+         var txt = $(this).val();   
+         if(txt){  
+              p2_list.push(txt);  
+         }  
+    }) 
+
+    var pall = {};
+
+    pall.p0 = p0 ;
+    pall.p1_list = p1_list;
+    pall.p2_list = p2_list;
+
+
+    $.post('/system/user/', JSON.stringify(pall), 
+        function(result){
+	    swal(result);
+    })
+
+
+})
+
+
+
+</script>

@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title text-center">
+      <a id="ssss" data-toggle="collapse" data-parent="#accordion" href="#filters" class="text-center">高级查询</a></h4>
+  </div>
+  <div id="filters" class="panel-collapse collapse">
+    <div class="panel-body">
+      <div class="x_content">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>
+                <div class=" input-group ">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary">客户端IP地址</button></span>
+                  <input type="text" class="form-control" id="client_address"></div>
+              </td>
+              <td>
+                <div class=" input-group ">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary">http接口地址</button></span>
+                  <input type="text" class="form-control" id="http_urlinterface" placeholder="支持正则表达式搜索" ></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+$(function() {
+    $('#filters').collapse({
+        toggle: false
+    })
+})
+
+
+$('#filters').on('hidden.bs.modal', function () {
+    $("#http_urlinterface").val('');
+    $("#client_address").val('');
+})
+
+
+function checkIP(value) {
+    var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    var reg = value.match(exp);
+    if (reg == null) {
+        swal("IP地址不合法！");
+        return false;
+    } else {
+
+        return true;
+    }
+}
+
+
+
+
+</script>
+
+
+

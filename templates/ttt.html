@@ -1,0 +1,72 @@
+
+{% extends "base.htmll" %}
+{% block body %}
+<link href="/static/css/jquery.treetable.theme.default.css" rel="stylesheet"  type="text/css" />  
+<link href="/static/css/jquery.treetable.css" rel="stylesheet" type="text/css" />  
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>  
+<script src="/static/js/jquery.treetable.js"></script>  
+  
+
+
+    <div class="row-fluid">
+        <table  id="example-advanced">
+          <thead>
+            <tr>
+              <th nowrap>Method</th>
+              <th nowrap>Argument</th>
+              <th nowrap>Start Time</th>
+              <th style=" text-align:center; ;">Gap(ms)</th>
+              <th style=" text-align:center; ;">Exex(ms)</th>
+              <th style=" text-align:center; ;">Exex(%)</th>
+              <th style=" text-align:center; ;">Self(ms)</th>
+              <th style=" text-align:center; ;">Class</th>
+              <th style=" text-align:center; ;">API</th>
+              <th style=" text-align:center; ;">Agent</th>
+              <th style=" text-align:center; ;">Application</th></tr>
+          </thead>
+          <tbody>
+		{% if tids%}
+		{% for tid in tids %}
+		    {% if  tid[6] == "1" %}
+                	<tr data-tt-id="1">
+                           <td nowrap style=" border: 1px solid #c7c7d6; padding:0px;  width=300px;" >{{tid[10]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px;" class="hidden-xs">{{tid[11]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; width: 100px;" class="hidden-xs hidden-sm">{{tid[12]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[13]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[14]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[15]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[16]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[17]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[19]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[20]}}</td>
+                            <td  style=" border: 1px solid #c7c7d6; padding:0px; text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[4]}}</td>
+                	</tr>
+		    {%else%}
+			<tr data-tt-id="{{tid[6]}}" data-tt-parent-id="{{tid[7]}}">  
+                    	    <td  nowrap >{{tid[10]}}</td>
+                            <td  nowrap >{{tid[11]}}</td>
+                            <td  nowrap >{{tid[12]}}</td>
+                            <td  style=" text-align:center;" >{{tid[13]}}</td>
+                            <td  style=" text-align:center;" >{{tid[14]}}</td>
+                            <td  style=" text-align:center;" >{{tid[15]}}</td>
+                            <td  style=" text-align:center;" >{{tid[16]}}</td>
+                            <td  style=" text-align:center;" >{{tid[17]}}</td>
+                            <td  style=" text-align:center;" >{{tid[19]}}</td>
+                            <td  style=" text-align:center;" >{{tid[20]}}</td>
+                            <td  style=" text-align:center;" >{{tid[4]}}</td>
+                	</tr>
+
+		    {%end%}
+		{% end %}
+		{% end %}
+          </tbody>
+        </table>
+    </div>
+
+
+    <script>  
+        $("#example-advanced").treetable({  
+            expandable : true  
+        });  
+    </script>
+{%end%}

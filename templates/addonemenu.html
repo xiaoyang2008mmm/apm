@@ -1,0 +1,40 @@
+<div class="modal fade" id="onemenumodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">新增一级菜单</h4></div>
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-primary">一级菜单名称:</button></span>
+          <input type="text" class="form-control" id="newone_name"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="newone_save">保存</button></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script>
+$("#newone_save").click(function(){
+    var  newonemenu = $("#newone_name").val();
+
+    if (newonemenu){
+        $.post('/system/menu/add/',{
+             newonemenu :  newonemenu    
+        }, function(data){
+	      if (data['status'] === "ok"){
+                  alert(data['msg']);
+		  $('#onemenumodal').modal('hide');
+	      }
+        })
+    }
+
+})
+</script>

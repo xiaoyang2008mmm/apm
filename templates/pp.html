@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block body %}
+<link href="/static/css/select2.min.css" rel="stylesheet" />
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<script src="/static/js/select2.min.js"></script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-2">
+    自定义开始时间:<input  type="text" readonly class="form-control form_datetime" id='ppstarttime'>
+    </div>
+    <div class="col-lg-2">
+    自定义结束时间:<input  type="text" readonly class="form-control form_datetime" id='ppendtime'>
+    </div>
+    <div class="col-lg-4">
+    APP应用名称: <select class="form-control" id='pp_select'>
+                    {%for name in pp_names%}
+                            <option>{{name['applicationName']}}</option>
+                    {%end%}
+                 </select>
+    </div>
+
+
+    <div class="col-lg-2" >
+      <button type="button" class="btn btn-lg btn-primary" style="padding-bottom:10px;margin-top:10px;" id='get_top20'>获取Top20</button></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <table class="bootstrapTable" data-toggle="table">
+        <thead>
+          <tr>
+            <th data-sortable="true" data-field="elapsed">执行时间(ms)</th>
+            <th data-sortable="true" data-field="traceId" >TransactionId</th>
+            <th data-sortable="true" data-field="span" data-formatter="sssss" data-events="operateEvents"  > 详情跳转 </th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function sssss(value, row, index) {
+    return '<button class="btn btn-default Like"  type="button" >查看详情</button>'
+}
+
+window.operateEvents = {
+    'click .Like': function(e, value, row, index) {
+        window.open(linkdetail(value,row)) ;
+    }
+};
+
+
+
+
+
+
+    function linkdetail(value,row) {
+        //默认跳转到本机详细页面
+        //return traceId + '<a href="/transactionId/?id=' + traceId  + '"><span class="glyphicon glyphicon-arrow-right"></span></a>'
+        var result = "";
+    
+        $.ajax({
+            url: "/transactionId/",
+            async: false,
+            //改为同步方式
+            type: "POST",
+            data: {
+                traceid: row.traceId  
+            },
+            success: function(ret) {
+                var data = ret['callStack'];
+    
+                var traceId = ret['transactionId'];
+                var agentId = ret['agentId'];
+                var focusTimestamp = ret['callStackStart'];
+                var spanId = '-1';
+	        var pinpoint_ip = "10.2.2.102:8080";
+                var transactionViewurl = "http://"+ pinpoint_ip +"/#/transactionView/" + agentId + '/' + traceId + '/' + focusTimestamp + '/' + spanId;
+    
+                result = transactionViewurl 
+            }
+        });
+    
+        return result
+    }
+
+
+
+
+
+    function unix2humanx(unixTimeStamp)   {
+        //功能：把unix时间戳转成Y-m-d H:i:s格式的日期
+        //var now=new Date(unixTimeStamp*1000);
+        var now=new Date(unixTimeStamp);
+        var year=now.getFullYear();
+        var month=now.getMonth()+1;
+        month=month<10?"0"+month:month;
+        var day=now.getDate();
+        day=day<10?"0"+day:day;
+        var hour=now.getHours();
+        hour=hour<10?"0"+hour:hour;
+        var minute=now.getMinutes();
+        minute=minute<10?"0"+minute:minute;
+        var second=now.getSeconds();
+        second=second<10?"0"+second:second;
+        return year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second;
+    }
+
+$("#pp_select").select2();
+</script>
+
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+
+
+
+
+
+
+<script type="text/javascript">
+$(".form_datetime").datetimepicker({
+    todayBtn: true,
+    autoclose: true, 
+    format: 'yyyy-mm-dd hh:ii:ss'
+  });
+</script>
+
+
+{%end%}
+
+

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block meta%}
+<meta http-equiv="refresh" content="300">
+{%end%}
+
+{% block head %}
+              <ul class="nav navbar-nav">
+               <form class="navbar-form navbar-left" >
+                <div class="form-group">
+                  <select class="form-control" id="allow_applist">
+                    {% for k in allowapps%}
+                    <option value="{{k}}">{{k}}</option>
+                    {%end%}
+                  </select>
+                </div>
+                <button type="button" class="btn btn-success" id="app_location">查看</button>
+               </form>
+
+              </ul>
+{% end %}
+
+
+
+{% block body %}
+
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+
+
+
+<div class="dashboard_graph">
+  <div class="row">
+    <div class="col-lg-2">
+    项目类型: <select class="form-control" id='charts_condition'>
+            <option value="interface">interface</option>
+            <option value="dns">dns</option></select>
+    </div>
+    <div class="col-lg-2">
+    自定义开始时间:<input  type="text" readonly class="form-control form_datetime" id='start_query'>
+    </div>
+    <div class="col-lg-2">
+    自定义结束时间:<input  type="text" readonly class="form-control form_datetime" id='end_query'>
+    </div>
+    <div class="col-lg-2">
+          <button type="button"  style=" margin-top:10px;" class="btn btn-info  btn-lg" id="make_charts">查询</button>
+    </div>
+    <div class="col-lg-3">
+
+	快捷查询:
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-sm" id="one_hour">1小时</button>
+          <button type="button" class="btn btn-default btn-sm" id="five_hours">5小时</button>
+          <button type="button" class="btn btn-default btn-sm" id="one_day">24小时</button></div>
+    </div>
+  </div>
+
+
+{%include index_a1.html%}
+
+
+
+    <div class=" dashboard_graph col-lg-12">
+        <div class="dark-unica" id="pinpoint-container"></div>
+    </div>
+
+	<!-- 全国图数据!!!!-->
+
+    <div class=" col-lg-6">
+      <button type="button" class="btn btn-success btn-lg btn-block"  style="cursor:default" >全国访问平均时间分布图</button></div>
+    </div>
+    <div class=" col-lg-6">
+      <button type="button" class="btn btn-success btn-lg btn-block" style="cursor:default" >全国访问APM接口PV图</button></div>
+    </div>
+    <div class=" dashboard_graph col-lg-6">
+              <div class="x_panel tile fixed_height_500">
+                <a  id="new_link2" class="collapse-link hide" href="/pv_count/" ><i class="fa fa-external-link"></i>查看大图</a>
+		<div id="china-container" style="height: 500px" ></div> 
+              </div>
+    </div>
+    <div class=" dashboard_graph col-lg-6">
+              <div class="x_panel tile fixed_height_500">
+                  <ul class="nav navbar-right panel_toolbox pull-right">
+                    <li><a  id="new_link" class="collapse-link hide" href="/pv_count/" ><i class="fa fa-external-link"></i>查看大图</a>
+                    </li>
+                  </ul>
+		<div id="apmpv_container" style="height: 500px" ></div> 
+              </div>
+    </div>
+
+
+
+
+  </div>
+
+</div>
+
+<script type="text/javascript" src="/static/js/highcharts.js"></script>
+<script type="text/javascript" src="/static/js/highcharts-zh_CN.js"></script>
+<script src="/static/js/dark-unica.js"></script>
+<script type="text/javascript" src="/static/js/exporting.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+
+
+
+
+
+
+<script type="text/javascript">
+$(".form_datetime").datetimepicker({
+    todayBtn: true,
+    autoclose: true, 
+    format: 'yyyy-mm-dd hh:ii:ss'
+  });
+</script>
+
+
+<script type="text/javascript" src="/static/js/echarts-all-3.js"></script>
+<script type="text/javascript" src="/static/js/china.js"></script>
+<script type="text/javascript" src="/static/js/chinamap.js"></script>
+
+
+
+{%end%}

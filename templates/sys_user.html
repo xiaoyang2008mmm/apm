@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+  <div class="x_panel">
+    <div class="x_content">
+
+      <div class="col-xs-2">
+        <!-- required for floating -->
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs tabs-left">
+          <li class="active"><a href="#auth_way" data-toggle="tab">认证方式</a>
+          </li>
+          <li><a href="#profile" data-toggle="tab">用户列表</a>
+          </li>
+          <li><a href="#messages" data-toggle="tab">项目权限</a>
+          </li>
+          <li><a href="#settings" data-toggle="tab">APM系统权限</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-xs-9">
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="auth_way">
+            <p class="lead">{% include switch_auth.html %}</p>
+          </div>
+          <div class="tab-pane" id="profile">{% include auth/user_list.html %}</div>
+
+          <div class="tab-pane" id="messages">{% include auth/p_privileges.html %}</div>
+          <div class="tab-pane" id="settings">{% include auth/sys.html %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%end%}
+

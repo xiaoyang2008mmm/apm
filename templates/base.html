@@ -1,0 +1,181 @@
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block meta %}{% end %}
+    <title>APM应用监控 </title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/css/nprogress.css" rel="stylesheet">
+    <link href="/static/css/green.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <link href="/static/css/jqvmap.min.css" rel="stylesheet"/>
+    <link href="/static/css/daterangepicker.css" rel="stylesheet">
+    <link href="/static/css/custom.min.css" rel="stylesheet">
+   <link href="/static/css/sweetalert.css" rel="stylesheet" />
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+   <script src="/static/js/yueke.js"></script>
+
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="/" class="site_title"> <span>APM应用监控</span></a>
+            </div>
+            <div class="clearfix"></div>
+            <div class="profile clearfix">
+              <div class="profile_pic">
+                <img src="http://www.9icaishi.com/wuli_second/img/catLogo.png" alt="..." class="img-circle profile_img">
+              </div>
+              <div class="profile_info">
+                <span>欢迎</span>
+                <h2>阅客公司</h2>
+              </div>
+            </div>
+            <br />
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <h3>上海阅客信息科技有限公司</h3>
+                <ul class="nav side-menu" id="menu_ul">
+		{% for keys in allmenus %}
+		  {% for k in keys %}
+		  <!--菜单是否显示检查-->
+		  {% for menu in keys[k]%}
+			{% if menu[1] in allow_urls %}
+                  	    <li><a><i class="fa fa-home"></i> {{k}} <span class="fa fa-chevron-down"></span></a>
+			    {% break %}
+			{% end %}
+		  {%end%}
+
+
+                    <ul class="nav child_menu">
+			{%for menu in keys[k]%}
+			    {% if menu[1] in allow_urls %}
+                                {% if menu[1].encode("utf8") == '/' %}
+                                    <li><a href="{{menu[1]}}?allow_app={{tab_fix}}">{{menu[0]}}</a></li>
+                                {% elif menu[1].encode("utf8") == '/app/monitor/' %}
+                                    <li><a href="{{menu[1]}}?allow_app={{tab_fix}}">{{menu[0]}}</a></li>
+                                {%else%}
+                                    <li><a href="{{menu[1]}}">{{menu[0]}}</a></li>
+                                {%end%}
+
+
+			    {%end%}
+			{%end%}
+                    </ul>
+                  </li>
+		  {%end%}
+		{%end%}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a  class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="get_loginuser">
+                    <img src="/static/images/catLogo.png" alt="">{{current_user}}
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="javascript:;"> 个人资料</a></li>
+                    <li>
+                      <a href="/auth/changepasswd/">
+                        <span>密码修改</span>
+                      </a>
+                    </li>
+                    <li><a  id="logoutjs"><i class="fa fa-sign-out pull-right"></i>退出系统</a></li>
+                  </ul>
+                </li>
+
+              </ul>
+
+
+{% block head %}
+{% end %}
+
+            </nav>
+          </div>
+        </div>
+        <div class="right_col" role="main">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              
+{% block body %}
+{% end %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+        </div>
+      </div>
+    </div>
+    
+    <script src="/static/js/bootstrap-progressbar.min.js"></script>
+    <script src="/static/js/icheck.min.js"></script>
+    <script src="/static/js/skycons.js"></script>
+    <script src="/static/js/jquery.flot.js"></script>
+    <script src="/static/js/jquery.flot.pie.js"></script>
+    <script src="/static/js/jquery.flot.time.js"></script>
+    <script src="/static/js/jquery.flot.stack.js"></script>
+    <script src="/static/js/jquery.flot.resize.js"></script>
+    <script src="/static/js/jquery.flot.orderBars.js"></script>
+    <script src="/static/js/jquery.flot.spline.min.js"></script>
+    <script src="/static/js/curvedLines.js"></script>
+    <script src="/static/js/date.js"></script>
+    <script src="/static/js/jquery.vmap.js"></script>
+    <script src="/static/js/jquery.vmap.world.js"></script>
+    <script src="/static/js/jquery.vmap.sampledata.js"></script>
+    <script src="/static/js/moment.min.js"></script>
+    <script src="/static/js/daterangepicker.js"></script>
+    <script src="/static/js/custom.min.js"></script>
+
+   <script type="text/javascript" src="/static/js/colResizable-1.6.min.js"></script>
+   <script src="/static/js/sweetalert.min.js"></script>
+   <script src="/static/js/bootstrap-table.min.js"></script>
+   <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
+   <script src="/static/js/userlogin.js"></script>
+
+<script>
+$("#app_location").click(function() {
+
+    var app = $("#allow_applist option:selected").val();
+    $.post('/project/appprivileges_check/', {
+        app: app
+    },
+    function(result) {
+        if (result['status']  === 'ok'){
+            var ns = $.inArray("/", {% raw allow_urls %}) ;
+            if (ns != -1){
+                window.location = '/?' + 'allow_app=' + result['msg'] ;
+            }else{swal("您没有系统本身查看权限，请联系管理员处理!!");}
+        }else{
+            swal("该项目还没有接入APM中");
+        }
+    })
+
+})
+
+</script>
+
+
+
+
+  </body>
+

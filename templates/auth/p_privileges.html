@@ -1,0 +1,107 @@
+{% include p1.html%}
+{% include p2.html%}
+<div class="x_panel">
+  <div class="x_title">
+    <h2>项目app列表</h2>
+    <ul class="nav navbar-right panel_toolbox">
+      <button type="button" class="btn btn-round btn-primary"  data-toggle="modal" data-target="#p1-myModal">新增</button>
+      <button type="button" class="btn btn-round btn-success" id="delbtn1">删除</button>
+      <button type="button" class="btn btn-round btn-danger" id="modbtn1">修改</button></ul>
+    <div class="clearfix"></div>
+  </div>
+  <div class="x_content">
+{% for app in applist() %}
+    <button type="button" class="btn btn-round btn-success">{{app['app_name']}}</button>
+{%end%}
+  </div>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>项目组名称</th>
+      <th>项目组app成员</th>
+      <th>项目人员</th></tr>
+  </thead>
+  <tbody id='project_tbody'>
+   {%for p in plist_table%}
+    <tr>
+      <td>{{ p['p0'] }}</td>
+      <td>{%for k in  p['p2_list'] %}   {{k}}	{%end%}</td>
+      <td>{%for k in  p['p1_list'] %}   {{k}}	{%end%}</td>
+    </tr>
+   {% end %}
+  </tbody>
+</table>
+
+
+
+
+<script>
+
+$("#delbtn1").click(function () {
+	var rowinfos = $("#project_tbody").find("tr[style]")  ;
+	if (rowinfos.length > 1 ){
+	    swal("请一条一条删除!!!");
+	}else{
+	   var  pgroup_name = ($("#project_tbody").find("tr[style]").children("td:first").text());
+        	$.post('/pname/delete/',{
+             	    pgroup_name :  pgroup_name    
+        	}, function(data){
+              	    alert(data);
+       		})
+	    //  删除此行
+
+	    rowinfos.remove();
+	}
+})
+
+
+$("#project_tbody tr").click(function () {
+        if ($(this).attr("style")){
+             $(this).removeAttr("style");
+	}else{
+
+	     $(this).css("background-color","#B9B9FF");
+	}
+
+})
+
+
+$("#modbtn1").click(function () {
+	var rowinfos = $("#project_tbody").find("tr[style]")  ;
+	if (rowinfos.length > 1 ){
+	    swal("只能选择一条进行修改!!!");
+	}else{
+	   var  pgroup_name = ($("#project_tbody").find("tr[style]").children("td:first").text());
+        	$.post('/pname/alter/',{
+             	    pgroup_name :  pgroup_name    
+        	}, function(data){
+		    $("#new2_ap").empty();
+		    $("#new2_pp").empty();
+		    $("#pp2_name").empty();
+		    //渲染数据
+		    $("#pp2_name").val(data['p0']);
+		
+            	    var pp = data['p2_list'];
+            	    $.each(pp,
+            		function(index, value) {
+                	    $("#new2_ap").prepend("<option value=" + value + ">" + value + "</option>");
+            	    });
+
+
+            	    var p1 = data['p1_list'];
+            	    $.each(p1,
+            		function(index, value) {
+                	    $("#new2_pp").prepend("<option value=" + value + ">" + value + "</option>");
+            	    });
+
+
+		    $('#p2-myModal').modal('toggle') ;
+       		})
+	
+	
+	}
+    
+})
+
+</script>

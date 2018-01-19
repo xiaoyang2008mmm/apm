@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="x_content">
+  <form data-parsley-validate class="form-horizontal form-label-left">
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">账号类型
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <select class="form-control" id="passwd_from">
+          <option>apm系统</option>
+          <option>ldap</option></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">新密码
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input  class="date-picker form-control col-md-7 col-xs-12" required="required" type="password" id="passwd_1"></div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">确认密码
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input  class="date-picker form-control col-md-7 col-xs-12" required="required" type="password" id="passwd_2"></div>
+    </div>
+    <div class="ln_solid"></div>
+    <div class="form-group">
+      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-4">
+        <button class="btn btn-primary" type="reset">重置</button>
+        <button type="button" class="btn btn-success" id="passwdsave">保存</button></div>
+    </div>
+  </form>
+</div>
+
+<script>
+
+$("#passwdsave").click(function() {
+
+    var account_from = $("#passwd_from option:selected").val();
+    var passwd_1 = $("#passwd_1").val();
+    var passwd_2 = $("#passwd_2").val();
+
+    if (!passwd_1 && !passwd_2) {
+        $("#passwd_1").after("请输入密码!");
+        $("#passwd_2").after("请输入密码!");
+        return
+    }
+    if (passwd_1 != passwd_2) {
+        swal("密码不一致");
+        return;
+    }
+
+    var msg = "确定要重置密码吗?";
+    if (confirm(msg) == true) {
+        alert('ok');
+    } else {
+        return false;
+    }
+
+})
+
+
+
+
+
+</script>
+{%end%}

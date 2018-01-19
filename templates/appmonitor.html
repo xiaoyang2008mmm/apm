@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="x_content">
+  <br />
+  <form  data-parsley-validate class="form-horizontal form-label-left">
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">报警标题
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="text" id="rule_title" required="required" class="form-control col-md-7 col-xs-12"></div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">报警规则
+        <span class="required">*</span></label>
+      <div class="col-md-8 col-sm-8 col-xs-12">
+        <table class="table table-condensed table-responsive  table-bordered">
+          <thead>
+            <tr>
+              <th>类型</th>
+              <th>时间(s)</th>
+              <th>符号</th>
+              <th>统计方式</th>
+              <th>阈值</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select class="form-control" id="rule_type">
+                  <option>INTERFACE</option>
+                  <option>DNS</option></select>
+              </td>
+              <td>
+                <select class="form-control" id="rule_case">
+                  <option value="1000">0-1</option>
+                  <option value="2000">1-2</option>
+                  <option value="3000">2-3</option>
+                  <option value="3001">大于3</option></select>
+              </td>
+              <td>
+                <select class="form-control" id="rule_way">
+                  <option>count</option>
+                </select>
+              </td>
+
+              <td>
+                <select class="form-control" id="rule_mark">
+                  <option value=">">大于</option>
+                  <option value="<">小于</option>
+                  <option value="=">等于</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" id="rule_text" name="email" required="required" class="form-control"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="item form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">报警接收人邮箱地址
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="email" id="rule_email" name="email" required="required" class="form-control col-md-7 col-xs-12">
+        <small>多个请按&nbsp;&nbsp;;&nbsp;&nbsp;分隔</small>
+      </div>
+    </div>
+    <div class="item form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">报警内容模板
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <textarea class="form-control col-md-7 col-xs-12" rows="3" id="rule_tpl" data-toggle="tooltip" data-placement="right" title="模板变量: 1.${APP}  2.${VALUE}" ></textarea>
+      </div>
+    </div>
+    <div class="ln_solid"></div>
+    <div class="form-group">
+      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+        <button class="btn btn-primary" type="reset">重置</button>
+        <button type="button" class="btn btn-success" id='rule_btn'>提交</button></div>
+    </div>
+  </form>
+</div>
+
+
+
+
+
+<div class="ln_solid"></div>
+{% include alarm_table.html %}
+
+
+
+<script>
+
+
+
+function getUrlParam(name) {
+   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+   var r = window.location.search.substr(1).match(reg);  
+   if (r != null) return unescape(r[2]); return null; 
+   }
+
+
+
+
+
+$("#rule_btn").click(function(){
+     var rule_title  = $("#rule_title").val() ;
+     var rule_tpl  = $("#rule_tpl").val() ;
+     var rule_text   = $("#rule_text").val();
+     var rule_email  = $("#rule_email").val();
+     var rule_type   = $("#rule_type  option:selected").val();
+     var rule_case   = $("#rule_case  option:selected").val();
+     var rule_mark   = $("#rule_mark  option:selected").val();
+     var rule_way   = $("#rule_way  option:selected").val();
+     var allow_app   = getUrlParam('allow_app');
+
+     var alarmobj = {};
+     alarmobj.rule_title = rule_title ;
+     alarmobj.rule_email = rule_email ;
+     alarmobj.rule_tpl = rule_tpl ;
+     alarmobj.allow_app = allow_app ;
+     alarmobj.rule_list = [rule_type, rule_case, rule_way, rule_mark, rule_text];
+
+     if ( rule_title && rule_tpl && rule_email && rule_text ){
+        $.post('/app/monitor/', JSON.stringify(alarmobj), 
+        function(result){
+                if(result['status'] === 'ok' ){
+		    alert(result['msg']);
+		};
+        })
+     }
+
+
+})
+
+
+</script>
+
+
+{%end%}
+

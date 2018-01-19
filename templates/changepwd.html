@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="x_content">
+  <form data-parsley-validate class="form-horizontal form-label-left">
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">账号类型来源
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <select class="form-control" id="passwd_from">
+          <option>apm系统</option>
+          <option>ldap</option></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">新密码
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input  class="date-picker form-control col-md-7 col-xs-12" required="required" type="password" id="passwd_1"><span id="passstrength_1"></span></div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3 col-sm-3 col-xs-12">确认密码
+        <span class="required">*</span></label>
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <input  class="date-picker form-control col-md-7 col-xs-12" required="required" type="password" id="passwd_2"><span id="passstrength_2"></span></div>
+    </div>
+    <div class="ln_solid"></div>
+    <div class="form-group">
+      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-4">
+        <button class="btn btn-primary" type="reset">重置</button>
+        <button type="button" class="btn btn-success" id="passwdsave">保存</button></div>
+    </div>
+  </form>
+</div>
+
+<script>
+$('#passwd_1').keyup(function(e) {
+    var enoughRegex = new RegExp('(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,30}');
+    if (enoughRegex.test($(this).val())) {
+        $('#passstrength_1').html('密码强度验证通过');
+    } else {
+        $('#passstrength_1').html('密码中必须包含字母、数字、特称字符，至少8个字符，最多30个字符。');
+    }
+});
+
+$('#passwd_2').keyup(function(e) {
+    var enoughRegex = new RegExp('(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,30}');
+    if (enoughRegex.test($(this).val())) {
+        $('#passstrength_2').html('密码强度验证通过');
+    } else {
+        $('#passstrength_2').html('密码中必须包含字母、数字、特称字符，至少8个字符，最多30个字符。');
+    }
+});
+
+
+
+$("#passwdsave").click(function() {
+
+    var account_from = $("#passwd_from option:selected").val();
+    var passwd_1 = $("#passwd_1").val();
+    var passwd_2 = $("#passwd_2").val();
+
+    if (!passwd_1 && !passwd_2) {
+        $("#passwd_1").after("请输入密码!");
+        $("#passwd_2").after("请输入密码!");
+        return
+    }
+    if (passwd_1 != passwd_2) {
+        swal("密码不一致");
+        return;
+    }
+
+    var msg = "确定要重置密码吗?";
+    if (confirm(msg) == true) {
+        var get_loginuser = $("#get_loginuser").text().replace(/[\r\n]/g, "");
+        var pwddata = {};
+        pwddata.account_from = account_from;
+        pwddata.get_loginuser = get_loginuser;
+        pwddata.passwd_1 = passwd_1;
+
+        $.post('/auth/changepasswd/', JSON.stringify(pwddata),
+        function(result) {
+            if(result['status']==="ok"){
+                swal(result['msg']);
+            };
+        })
+
+    } else {
+        return false;
+    }
+
+})
+
+
+
+
+
+
+
+
+</script>
+{%end%}

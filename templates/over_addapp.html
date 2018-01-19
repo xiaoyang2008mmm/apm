@@ -1,0 +1,144 @@
+<script src="/static/js/validator.js"></script>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">新建app项目</h4></div>
+      <div class="modal-body">
+                    <form class="form-horizontal form-label-left" novalidate>
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">项目ID: <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                           <input type="text" id="_id" class="form-control col-md-7 col-xs-12"  disabled>
+                        </div>
+                      </div>
+
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">项目名字 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                          <input id="app_name" class="form-control col-md-7 col-xs-12"   required="required" type="text">
+                        </div>
+                      </div>
+                     
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">项目表名 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                          <input id="app_table_name" class="form-control col-md-7 col-xs-12"  required="required"  type="text" onkeyup="value=value.replace(/[^\w\_\/]/ig,'')">       <small>只能输入英文和下划线,请勿输入汉字或者特殊字符<small>
+                        </div>
+                      </div>
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">PinPoint前缀标识 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                          <input id="ppkey_words" class="form-control col-md-7 col-xs-12"   required="required" type="text">
+			  请以下划线_结尾
+                        </div>
+                      </div>
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">RequestID ES地址 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                          <input id="appes_ip" class="form-control col-md-7 col-xs-12"   required="required" type="text" placeholder="ip:port">
+                        </div>
+                      </div>
+                     
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="textarea"> 备注 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-7 col-sm-6 col-xs-12">
+                          <textarea id="app_desc" required="required" name="textarea" class="form-control col-md-7 col-xs-12"></textarea>
+                        </div>
+                      </div>
+                    </form>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="post_save" >提交</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function isIP(ip)   
+{   
+    var re =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5]):(\d+)$/  ; 
+    return re.test(ip);   
+}
+
+
+
+$("#post_save").click(function() {
+    var app_name = $("#app_name").val();
+    var app_desc = $("#app_desc").val();
+    var appes_ip = $("#appes_ip").val();
+    var _id = $("#_id").val();
+    var app_ppkey_words = $("#ppkey_words").val();
+    var app_table_name = $("#app_table_name").val();
+
+    if ( ! isIP(appes_ip)){
+        swal("请输入合法的IP地址!!!");
+	return ;
+    }
+
+
+    function confirmEnding(str,target) {
+        return str.substring(str.length-target.length)  === target;
+    }
+
+    var data = new Object();
+    data._id = _id;
+    data.app_name = app_name;
+    data.app_desc = app_desc;
+    data.appes_ip = appes_ip;
+    data.app_ppkey_words = app_ppkey_words;
+    data.app_table_name = app_table_name;
+
+    if ( ! confirmEnding(app_ppkey_words,'_')){
+        swal("PinPoint前缀标识请以下划线_结尾");
+    };
+   
+    if (app_name && app_table_name){
+        $.post('/app_add/', JSON.stringify(data), 
+	function(result){
+	    var ret = result['status'] ;
+	    if ( ret === 'ok'){
+        	$("#app_name").val("");
+        	$("#app_desc").val("");
+        	$("#app_table_name").val("");
+        	$("#ppkey_words").val("");
+		$('#myModal').modal('hide');
+		alert(result['msg']);
+		window.location.reload(); 
+	    }else{
+		swal(result['msg']);
+	    }
+	})
+     }
+
+});
+
+
+
+
+//UUID生成器算法
+function guid() {
+    function S4() {
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    }
+    return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+}
+$("#_id").val(guid());
+
+
+</script>

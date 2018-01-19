@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block body %}
+<link href="/static/css/jquery.treetable.theme.default.css" rel="stylesheet"  type="text/css" />
+<link href="/static/css/jquery.treetable.css" rel="stylesheet" type="text/css" />
+<script src="/static/js/jquery.treetable.js"></script>
+
+
+
+	<!--
+        <div class="col-md-1">
+		<h4><span class="label label-primary">TransactionId</span></h4>
+        </div>
+        <div class="col-md-3">
+          <input class="form-control" type="text" id="traceid" value="{{trac_id}}">
+        </div>
+
+        <div class="col-md-1">
+        <input class="btn btn-primary" type="button"  value="PINPOINT查询" id="trans_btn">
+        </div>
+	-->
+
+        <div class="col-md-3">
+          <input class="form-control" type="text" id="req_id"  placeholder="请输入要查询的requestId">
+        </div>
+
+        <div class="col-md-1">
+        <input class="btn btn-danger" type="button"  value="跳转到pinpoint" id="t_btn">
+        </div>
+
+
+        <table class="table-hover" id="example-advanced" >
+          <thead>
+            <tr>
+              <th nowrap style=" border: 1px solid #c7c7d6; padding:0px;  ">Method</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  ">Argument</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  ">Start Time</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Gap(ms)</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Exex(ms)</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Exex(%)</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Self(ms)</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Class</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">API</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Agent</th>
+              <th style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center; ">Application</th></tr>
+          </thead>
+          <tbody id="tid_tbody">
+		{% if tids%}
+		{% for tid in tids %}
+		    {% if  tid[6] == "1" %}
+			<tr data-tt-id="1">
+               	    <td nowrap style=" border: 1px solid #c7c7d6; padding:0px;   " >{{tid[10]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px; " class="hidden-xs">{{tid[11]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  " class="hidden-xs hidden-sm">{{tid[12]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[13]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[14]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[15]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md ">{{tid[16]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[17]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[19]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[20]}}</td>
+		    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[4]}}</td>
+                	</tr>
+		    {%else%}
+			<tr data-tt-id="{{tid[6]}}" data-tt-parent-id="{{tid[7]}}">
+               	    <td  nowrap style=" border: 1px solid #c7c7d6; padding:0px;  " >{{tid[10]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px; " class="hidden-xs">{{tid[11]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px; " class="hidden-xs hidden-sm">{{tid[12]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[13]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[14]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[15]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[16]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[17]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[19]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[20]}}</td>
+                    <td  style=" border: 1px solid #c7c7d6; padding:0px;  text-align:center;" class="hidden-xs hidden-sm hidden-md">{{tid[4]}}</td>
+                	</tr>
+
+		    {%end%}
+		{% end %}
+		{% end %}
+          </tbody>
+        </table>
+
+
+<script>
+
+
+$(document).ready(function() {
+    $("table").colResizable();
+
+
+    function Appendzero(obj)  
+    {  
+        if(obj<10) return "0" +""+ obj;  
+        else return obj;  
+    } 
+
+
+    $("#t_btn").click(function() {
+    
+        var myDate = new Date();
+        var ymd = String(myDate.getFullYear()) + '.' + Appendzero(myDate.getMonth() + 1) + '.' + String(myDate.getDate()) ;    
+    
+        var reqid = $("#req_id").val();
+    
+    
+    	var data = { "query":{"bool":{"must":[{"prefix":{"http_pinpoint_traceid.keyword": reqid }}]}} } ;
+    
+        $.ajax({
+    	    method: "POST",
+            url: 'http://10.3.2.114:9200/api_5wuli_com_'+ String(ymd) +'/logs/_search?pretty=true',
+      	    crossDomain: true,  
+      	    async: false,
+      	    data: JSON.stringify(data),
+      	    dataType : 'json',
+      	    contentType: 'application/json',
+    
+                success: function(ret_data) {
+    		var d = ((ret_data['hits'])['hits'])[0]
+    		if (d){
+                    var traceid = (d._source)['http_pinpoint_traceid'] ;
+                $.post("/transactionId/", {
+                    traceid: traceid
+                  },
+        	  function(ret) {
+                    var data = ret['callStack'] ;
+
+                    var traceId = ret['transactionId'];
+                    var agentId = ret['agentId'];
+                    var focusTimestamp= ret['callStackStart'];
+                    var spanId = '-1' ;
+		    var pinpoint_ip = "10.2.2.102:8080";
+                    var transactionViewurl =  "http://" + pinpoint_ip +"/#/transactionView/" + agentId + '/'+ traceId + '/' + focusTimestamp + '/' + spanId ; 
+
+                     window.open(transactionViewurl);
+		});
+
+
+
+    		}else{
+    		   swal("没有查询到数据,请检查!!!") ;
+    		}
+                },
+              });
+    
+    
+    
+    });
+    
+    $("#trans_btn").click(function() {
+        var traceid = $("#traceid").val();
+	var pinpoint_ip = "10.2.2.102:8080";
+        (istraceid(traceid)) ? $.post("/transactionId/", {
+            traceid: traceid
+        },
+        function(ret) {
+    	var data = ret['callStack'] ;
+
+            var traceId = ret['transactionId'];
+            var agentId = ret['agentId'];
+            var focusTimestamp= ret['callStackStart'];
+    	    var spanId = '-1' ;
+    	    var transactionViewurl =  "http://" + pinpoint_ip + "/#/transactionView/" + agentId + '/'+ traceId + '/' + focusTimestamp + '/' + spanId ; 
+
+    	    window.open(transactionViewurl);
+
+
+    
+        }) : swal("输入不符合TransactionId语法!!!")
+    
+        function istraceid(t_id) {
+            var pattern = /(.*)\^(.*)\^(.*)/;
+            return pattern.test(t_id);
+        }
+    
+       });
+
+    console.time("test");
+        $("#example-advanced").treetable({  
+            expandable : true  
+        });
+    console.timeEnd("test");
+
+});
+
+
+</script>
+{%end%}

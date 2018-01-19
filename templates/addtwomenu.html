@@ -1,0 +1,49 @@
+<div class="modal fade" id="twomenumodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">新增二级菜单</h4></div>
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-primary">二级菜单名称:</button></span>
+          <input type="text" class="form-control" id="newtwo_name"></div>
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-primary">二级菜单路由:</button></span>
+          <input type="text" class="form-control" id="newtwo_url" placeholder="路由必须以/开头和结尾"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="newtwo_save">保存</button></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script>
+$("#newtwo_save").click(function() {
+    var newtwoname = $("#newtwo_name").val();
+    var newtwourl = $("#newtwo_url").val();
+    var menu_one = $("#menu_one  option:selected").val();
+
+    if (newtwoname && newtwourl) {
+        $.post('/system/menu/add/', {
+	    menu_one: menu_one ,
+            newtwoname: newtwoname,
+            newtwourl: newtwourl
+        },
+        function(data) {
+            if (data['status'] === "ok") {
+                alert(data['msg']);
+                $('#twomenumodal').modal('hide');
+            }
+        })
+    }
+
+})
+</script>

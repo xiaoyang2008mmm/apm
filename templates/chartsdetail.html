@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block body %}
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+
+
+        <table  class="table-striped dashboard_graph x_panel " >
+          <thead>
+            <tr style="color:Blue">
+	{%for th_key in tab_th_list%}
+		{% if th_key == "requestUrl"%}
+              <th style="width: 700px; text-align:center; " ><h3>{{ th_key}}</h3></th>
+		{%else%}
+              <th style="text-align:center;" ><h3>{{ th_key}}</h3></th>
+		{%end%}
+	{% end %}
+          </thead>
+          <tbody id="dns_ip">
+
+        {% for key in shuju %}
+            <tr>
+		{%for row in tab_th_list%}
+		    {% if (row == "startTime" or row ==  "endTime") %}
+			{% set ss = key[row] %}
+			<td nowrap style=" border: 1px ;" >
+				 <button type="button" class="btn btn-dark">{{timestamp_datetime(ss)  }}</button>
+			</td>
+                    {%elif  (row == "client_ip") %}
+                        <td  data-id="{{key[row]}}" style=" border: 1px solid #eee;">   {{key[row]}} </td>
+
+
+                    {%elif  (row == "requestUrl") %}
+              		<td >   
+                         {{ key[row] }}
+			</td>
+
+  
+                    {%elif  (row == "range_time") %}
+              		<td style="border: 1px ; text-align:center; " >   
+				 <button style="width:100px;" type="button" class="btn btn-dark">{{ key[row] }}</button>
+			</td>
+
+                    {%elif  (row == "requestId") %}
+			<td style=" border: 1px ;">  
+				<button style="width:250px;" type="button" class="btn btn-success" value="{{key[row]}}"> 
+				  		{{key[row]}}	
+				</button>
+			</td>
+
+		    {% else %}
+              		<td style=" border: 1px ;">{{key[row]}}</td>
+		    {% end %}
+		{% end %}
+            </tr>
+        {% end %}
+
+          </tbody>
+        </table>
+<ul class="fy" id="number">
+    {% raw yem %}
+</ul>
+
+
+	</div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/static/js/jquery.tablesort.min.js" charset="UTF-8"></script>
+
+<style>
+   #number{list-style-type:none;float:right;margin-right:10%;}
+   #number li{float:left;margin-left:10px;border:1px #000 solid;/*width:50px;height:25px;*/line-height: 25px;}
+   #number li a{text-decoration: none;padding:20px 10px;}
+   #dns_ip td{text-align: center;}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    //表格排序插件
+    $('table').tablesort().data('tablesort');
+
+    //表格url溢出处理
+    $("#dns_ip td").each(function() {
+
+        var col = $(this).index();
+        if (col === 5 ){
+              var maxwidth;
+  	     if(document.body.clientWidth <= 1366){
+		maxwidth = 16
+    	     } else{
+		maxwidth = 50;
+     	     }
+            if($(this).text().length>maxwidth){
+                $(this).text($(this).text().substring(0,maxwidth));
+                $(this).html($(this).html()+'...');
+            }
+        }
+    });
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+        var r = window.location.search.substr(1).match(reg);  
+        if (r != null) return unescape(r[2]); return null; 
+    }
+
+
+    $("#dns_ip td").dblclick(function() {
+    
+        var col = $(this).index();
+	console.log(col);
+        var api_type = getUrlParam('serverName');
+        if (col === 5) {
+            if (api_type === "interface") {
+                var requestid = ($(this).next().text());
+                var allow_app = getUrlParam('allow_app');
+                $.post("/chartsdetail/", {
+                    requestid: requestid,
+                    api_type: api_type,
+                    allow_app: allow_app
+                },
+                function(ret) {
+                    if (ret['status'] === 'ok') {
+                        alert(ret["msg"]);
+                    }
+                })
+            }
+        }
+    });
+
+
+
+
+
+
+    $("#dns_ip td:nth-child(7) button").click(function() {
+
+        var reqid = $(this).parent().find("button").attr("value");
+        var ymd = ($(this).parent().parent().find("td:nth-child(3)").text().replace(/-/g,".").split(' '))[0] ;
+
+
+        swal({
+            title: '跳转到pinpoint服务',
+            //弹出框的title
+            text: "该请求ID是" + reqid + "需要跳转吗?",
+            //弹出框里面的提示文本
+            type: "warning",
+            //弹出框类型
+            showCancelButton: true,
+            //是否显示取消按钮
+            confirmButtonColor: "#DD6B55",
+            //确定按钮颜色
+            cancelButtonText: "取消",
+            //取消按钮文本
+            confirmButtonText: "跳转！",
+            //确定按钮上面的文档
+            closeOnConfirm: false
+        },function(){
+
+        var myDate = new Date();
+        var data = { "query":{"bool":{"must":[{"prefix":{"http_pinpoint_traceid.keyword": reqid }}]}} } ;
+	var es_ip = "{{all_ips['appes_ip']}}";
+
+          $.ajax({
+            method: "POST",
+            url: 'http://' + es_ip +'/api_5wuli_com_'+ String(ymd) +'/logs/_search?pretty=true',
+            crossDomain: true, 
+            async: true,
+            data: JSON.stringify(data),
+            dataType : 'json',
+            contentType: 'application/json',
+
+            success: function(ret_data) {
+                var d = ((ret_data['hits'])['hits'])[0]
+                if (d){
+                     var tid_msg = (d._source)['http_pinpoint_traceid'] ;
+		     to_pinpoint(tid_msg);
+                }else{
+                   swal("没有查询到数据,请检查!!!") ;
+                }
+            },
+          });
+
+        });
+
+     })
+
+
+
+
+
+
+
+    function Appendzero(obj)  
+    {  
+        if(obj<10) return "0" +""+ obj;  
+        else return obj;  
+    } 
+
+
+    var pinpoint_ip = "10.2.2.102:8080";
+
+    function to_pinpoint(tid) {
+        $.post("/transactionId/", {
+            traceid: tid 
+        },
+        function(ret) {
+            var traceId = ret['transactionId'];
+            var agentId = ret['agentId'];
+            var focusTimestamp= ret['callStackStart'];
+            var spanId = '-1' ;
+           
+            var transactionViewurl =  "http://"+ pinpoint_ip +"/#/transactionView/" + agentId + '/'+ traceId + '/' + focusTimestamp + '/' + spanId ; 
+	    swal.close();
+            window.open(transactionViewurl);
+        })
+    
+    }
+
+
+
+
+
+});
+
+</script>
+
+{%end%}
